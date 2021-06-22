@@ -1,0 +1,646 @@
+import React, { useState, useEffect } from "react"
+import {
+  Container,
+  Row,
+  Col,
+  Nav,
+  NavItem,
+  NavLink,
+  TabContent,
+  TabPane,
+  FormGroup,
+  Label,
+  CardBody,
+  CardTitle,
+  Badge,
+  CardSubtitle,
+  Form,
+  Input,
+} from "reactstrap"
+import Modal from "@material-ui/core/Modal"
+
+import "./AdminStyling.css"
+import Breadcrumbs from "../../components/Common/Breadcrumb"
+
+import Sidebar from "../../components/VerticalLayout/Sidebar"
+import Header from "../../components/HorizontalLayout/Header"
+import BackDrop from "../../components/utils/backdrop"
+
+import { makeStyles, useTheme } from "@material-ui/core/styles"
+import Card from "@material-ui/core/Card"
+import CardContent from "@material-ui/core/CardContent"
+
+import PropTypes from "prop-types"
+
+import Table from "@material-ui/core/Table"
+import TableBody from "@material-ui/core/TableBody"
+import TableCell from "@material-ui/core/TableCell"
+import TableHead from "@material-ui/core/TableHead"
+import TableContainer from "@material-ui/core/TableContainer"
+import TableFooter from "@material-ui/core/TableFooter"
+import TablePagination from "@material-ui/core/TablePagination"
+import TableRow from "@material-ui/core/TableRow"
+import Paper from "@material-ui/core/Paper"
+import IconButton from "@material-ui/core/IconButton"
+import FirstPageIcon from "@material-ui/icons/FirstPage"
+import KeyboardArrowLeft from "@material-ui/icons/KeyboardArrowLeft"
+import KeyboardArrowRight from "@material-ui/icons/KeyboardArrowRight"
+import LastPageIcon from "@material-ui/icons/LastPage"
+
+import Dialog from "@material-ui/core/Dialog"
+import DialogActions from "@material-ui/core/DialogActions"
+import DialogContent from "@material-ui/core/DialogContent"
+import DialogContentText from "@material-ui/core/DialogContentText"
+import DialogTitle from "@material-ui/core/DialogTitle"
+
+import Button from "@material-ui/core/Button"
+
+import TextField from "@material-ui/core/TextField"
+import Autocomplete from "@material-ui/lab/Autocomplete"
+
+import { CREATE, GET, UPDATE, DELETE } from "../../configuration/API-Instance"
+import { notification, DatePicker } from "antd"
+
+import moment from "moment"
+
+const { RangePicker } = DatePicker
+
+const openNotificationWithIcon = (type, title, details) => {
+  notification[type]({
+    message: title,
+    description: details,
+  })
+}
+
+const CardStyle = makeStyles({
+  root: {
+    minWidth: 275,
+    // height: 400
+  },
+  bullet: {
+    display: "inline-block",
+    margin: "0 2px",
+    transform: "scale(0.8)",
+  },
+  title: {
+    fontSize: 14,
+  },
+  pos: {
+    marginBottom: 12,
+  },
+})
+
+const useStyles1 = makeStyles(theme => ({
+  root: {
+    flexShrink: 0,
+    marginLeft: theme.spacing(2.5),
+  },
+}))
+
+function TablePaginationActions(props) {
+  const classes = useStyles1()
+  const theme = useTheme()
+  const { count, page, rowsPerPage, onChangePage } = props
+
+  const handleFirstPageButtonClick = event => {
+    onChangePage(event, 0)
+  }
+
+  const handleBackButtonClick = event => {
+    onChangePage(event, page - 1)
+  }
+
+  const handleNextButtonClick = event => {
+    onChangePage(event, page + 1)
+  }
+
+  const handleLastPageButtonClick = event => {
+    onChangePage(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1))
+  }
+
+  return (
+    <div className={classes.root}>
+      <IconButton
+        onClick={handleFirstPageButtonClick}
+        disabled={page === 0}
+        aria-label="first page"
+      >
+        {theme.direction === "rtl" ? <LastPageIcon /> : <FirstPageIcon />}
+      </IconButton>
+      <IconButton
+        onClick={handleBackButtonClick}
+        disabled={page === 0}
+        aria-label="previous page"
+      >
+        {theme.direction === "rtl" ? (
+          <KeyboardArrowRight />
+        ) : (
+          <KeyboardArrowLeft />
+        )}
+      </IconButton>
+      <IconButton
+        onClick={handleNextButtonClick}
+        disabled={page >= Math.ceil(count / rowsPerPage) - 1}
+        aria-label="next page"
+      >
+        {theme.direction === "rtl" ? (
+          <KeyboardArrowLeft />
+        ) : (
+          <KeyboardArrowRight />
+        )}
+      </IconButton>
+      <IconButton
+        onClick={handleLastPageButtonClick}
+        disabled={page >= Math.ceil(count / rowsPerPage) - 1}
+        aria-label="last page"
+      >
+        {theme.direction === "rtl" ? <FirstPageIcon /> : <LastPageIcon />}
+      </IconButton>
+    </div>
+  )
+}
+
+TablePaginationActions.propTypes = {
+  count: PropTypes.number.isRequired,
+  onChangePage: PropTypes.func.isRequired,
+  page: PropTypes.number.isRequired,
+  rowsPerPage: PropTypes.number.isRequired,
+}
+
+function ConcentrationSetup() {
+  const [open, setOpen] = useState(false)
+  const [show, setshow] = useState(false)
+  const [rows, setRows] = useState([])
+  const [options, setOptions] = useState([])
+
+  const [isEdit, setIsEdit] = useState(false)
+  const [editObject, setEditObject] = useState({})
+
+  const [setupId, setSetupId] = useState("")
+  const [comboText, setComboText] = useState("")
+  const [dosage20, setdosage20] = useState("")
+  const [dosage20hc, setdosage20hc] = useState("")
+  const [dosage40, setdosage40] = useState("")
+  const [dosageLOT, setdosageLOT] = useState("")
+  const [dosageBulk, setdosageBulk] = useState("")
+
+  const [Name, setName] = useState("")
+  const [comboVal, setComboVal] = useState("")
+
+  const [page, setPage] = React.useState(0)
+  const [rowsPerPage, setRowsPerPage] = React.useState(5)
+
+  const emptyRows =
+    rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage)
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage)
+  }
+
+  const handleChangeRowsPerPage = event => {
+    setRowsPerPage(parseInt(event.target.value, 10))
+    setPage(0)
+  }
+
+  const handleClickOpen = () => {
+    setOpen(true)
+  }
+
+  const handleClose = () => {
+    setOpen(false)
+    setName("")
+    setIsEdit(false)
+    setdosage20("")
+    setdosage40("")
+    setdosage20hc("")
+    setdosageLOT("")
+    setdosageBulk("")
+    setComboText("")
+  }
+
+  //  ========================= Api Integration Section Starts =========================
+
+  const getSetupFillCombo = () => {
+    setshow(true)
+    GET("/api/Setup/GetItemSetupCombo")
+      .then(setups => {
+        if (setups.status == 200) {
+          setOptions(setups.data)
+          setshow(false)
+        }
+      })
+      .catch(e => {
+        setshow(false)
+        console.log(e.response)
+      })
+  }
+
+  const getSetups = () => {
+    setshow(true)
+    GET("/api/Setup/GetAllChemicalConcentrationSetup")
+      .then(setups => {
+        if (setups.status == 200) {
+          setRows(setups.data)
+          console.log(setups.data)
+          setshow(false)
+        }
+      })
+      .catch(e => {
+        setshow(false)
+        console.log(e.response)
+      })
+  }
+
+  const upsertSetup = () => {
+    if (!!isEdit) {
+      let body = {
+        id: setupId,
+        name: Name,
+        itemId: comboVal,
+        d20: Number(dosage20),
+        d40: Number(dosage40),
+        d40HC: Number(dosage20hc),
+        dlot: Number(dosageLOT),
+        dBulk: Number(dosageBulk),
+        isValid: true,
+      }
+      UPDATE(`/api/Setup/UpdateChemicalConcentrationSetup`, body)
+        .then(res => {
+          if (res.status == 200) {
+            openNotificationWithIcon(
+              "success",
+              "Chemical Concentration Setup",
+              "Chemical Concentration Updated Successfully"
+            )
+            setOpen(false)
+            setName("")
+            setComboText("")
+            setdosage20("")
+            setdosage40("")
+            setdosage20hc("")
+            setdosageLOT("")
+            setdosageBulk("")
+            setIsEdit(false)
+            getSetups()
+          }
+        })
+        .catch(e => {
+          console.log(e.response)
+        })
+    } else {
+      let body = {
+        name: Name,
+        itemId: comboVal,
+        d20: Number(dosage20),
+        d40: Number(dosage40),
+        d40HC: Number(dosage20hc),
+        dlot: Number(dosageLOT),
+        dBulk: Number(dosageBulk),
+        isValid: true,
+      }
+      CREATE("/api/Setup/CreateChemicalConcentrationSetup", body)
+        .then(res => {
+          if (res.status == 200) {
+            openNotificationWithIcon(
+              "success",
+              "Chemical Concentration Setup",
+              "Chemical Concentration Added Successfully"
+            )
+            setOpen(false)
+            setName("")
+            setComboText("")
+            setdosage20("")
+            setdosage40("")
+            setdosage20hc("")
+            setdosageLOT("")
+            setdosageBulk("")
+            setIsEdit(false)
+            getSetups()
+          }
+        })
+        .catch(e => {
+          console.log(e.response)
+        })
+    }
+  }
+
+  //  ========================= Api Integration Section Ends =========================
+
+  useEffect(() => {
+    getSetups()
+    getSetupFillCombo()
+  }, [])
+
+  const editSetup = item => {
+    setEditObject(item)
+
+    setSetupId(item.id)
+    setName(item.name)
+
+    setdosage20(item.d20)
+    setdosage40(item.d40)
+    setdosage20hc(item.d40HC)
+    setdosageLOT(item.dlot)
+    setdosageBulk(item.dBulk)
+
+    setComboVal(item.itemSetup ? item.itemSetup.id : null)
+    setOpen(true)
+
+    setIsEdit(true)
+
+    setComboText(item.itemSetup ? item.itemSetup.name : null)
+  }
+
+  const handleComboValue = e => {
+    let value = e.target.innerText
+
+    if (value) {
+      let comboId = options.find(item => item.name === value)
+      setComboText(value)
+      setComboVal(comboId.id)
+    }
+  }
+
+  const classes = CardStyle()
+  return (
+    <React.Fragment>
+      <Header />
+      <Sidebar />
+
+      <div className="page-content">
+        <Container fluid>
+          {/* Render Breadcrumb */}
+          <Breadcrumbs title="Admin" breadcrumbItem="Chemical Concentration" />
+          <BackDrop open={show} />
+          <div className="checkout-tabs">
+            <Row>
+              <Col md="2"></Col>
+              <Col lg="10">
+                <Card className={classes.root}>
+                  <h4 className="mt-4" style={{ textAlign: "center" }}>
+                    Chemical Concentration
+                  </h4>
+                  <CardContent>
+                    <div>
+                      <Button
+                        className="float-right mr-3"
+                        color="primary"
+                        variant="contained"
+                        onClick={handleClickOpen}
+                      >
+                        Add Chemical Concentration
+                      </Button>
+                    </div>
+                    {rows.length ? (
+                      <TableContainer component={Paper}>
+                        <Table
+                          className={classes.table}
+                          aria-label="custom pagination table"
+                        >
+                          <TableHead>
+                            <TableRow>
+                              <TableCell>
+                                <b>Chemical Concentration</b>
+                              </TableCell>
+                              <TableCell>
+                                <b>Chemical Name </b>
+                              </TableCell>
+                              <TableCell>
+                                <b>Dosage 20 </b>
+                              </TableCell>
+                              <TableCell>
+                                <b>Dosage 40 </b>
+                              </TableCell>
+                              <TableCell>
+                                <b>Dosage LOT </b>
+                              </TableCell>
+                              <TableCell>
+                                <b>Dosage 40 HC </b>
+                              </TableCell>
+                              <TableCell>
+                                <b>Dosage Bulk </b>
+                              </TableCell>
+                              <TableCell>
+                                <b>Actions</b>
+                              </TableCell>
+                            </TableRow>
+                          </TableHead>
+                          <TableBody>
+                            {(rowsPerPage > 0
+                              ? rows.slice(
+                                  page * rowsPerPage,
+                                  page * rowsPerPage + rowsPerPage
+                                )
+                              : rows
+                            ).map((row, i) => (
+                              <TableRow key={i}>
+                                <TableCell>{row.name}</TableCell>
+                                <TableCell>
+                                  {row.itemSetup ? row.itemSetup.name : "-"}
+                                </TableCell>
+                                <TableCell>{row.d20}</TableCell>
+                                <TableCell>{row.d40}</TableCell>
+                                <TableCell>{row.dlot}</TableCell>
+                                <TableCell>{row.d40HC}</TableCell>
+                                <TableCell>{row.dBulk}</TableCell>
+                                <TableCell>
+                                  <Button
+                                    onClick={() => editSetup(row)}
+                                    color="primary"
+                                    variant="contained"
+                                  >
+                                    Edit
+                                  </Button>
+                                  &nbsp;
+                                  <Button color="secondary" variant="contained">
+                                    Delete
+                                  </Button>
+                                </TableCell>
+                              </TableRow>
+                            ))}
+
+                            {emptyRows > 0 && (
+                              <TableRow style={{ height: 53 * emptyRows }}>
+                                <TableCell colSpan={6} />
+                              </TableRow>
+                            )}
+                          </TableBody>
+                          <TableFooter>
+                            <TableRow>
+                              <TablePagination
+                                rowsPerPageOptions={[
+                                  5,
+                                  10,
+                                  25,
+                                  { label: "All", value: -1 },
+                                ]}
+                                colSpan={3}
+                                count={rows.length}
+                                rowsPerPage={rowsPerPage}
+                                page={page}
+                                SelectProps={{
+                                  inputProps: {
+                                    "aria-label": "rows per page",
+                                  },
+                                  native: true,
+                                }}
+                                onChangePage={handleChangePage}
+                                onChangeRowsPerPage={handleChangeRowsPerPage}
+                                ActionsComponent={TablePaginationActions}
+                              />
+                            </TableRow>
+                          </TableFooter>
+                        </Table>
+                      </TableContainer>
+                    ) : (
+                      <h5>No Record Found</h5>
+                    )}
+                  </CardContent>
+                </Card>
+              </Col>
+            </Row>
+          </div>
+        </Container>
+
+        {/* add / edit dialog form */}
+        <Dialog
+          fullWidth={true}
+          maxWidth={"md"}
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="max-width-dialog-title"
+        >
+          <DialogTitle id="max-width-dialog-title">
+            Chemical Concentration
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              <Form>
+                <Row form>
+                  <Col md={4}>
+                    <FormGroup>
+                      {/* <Label for="exampleEmail">Textfeild</Label> */}
+                      <Input
+                        type="text"
+                        style={{ height: 55, marginTop: "16px" }}
+                        placeholder="Concentration Desc"
+                        value={Name}
+                        onChange={e => setName(e.target.value)}
+                      />
+                    </FormGroup>
+                  </Col>
+
+                  <Col md={4}>
+                    <FormGroup>
+                      <Autocomplete
+                        value={comboText}
+                        id="free-solo-demo"
+                        onChange={handleComboValue}
+                        options={options.map(option => option.name)}
+                        style={{ height: 55 }}
+                        renderInput={params => (
+                          <TextField
+                            {...params}
+                            label="Select Chemical Name"
+                            margin="normal"
+                            variant="outlined"
+                          />
+                        )}
+                      />
+                    </FormGroup>
+                  </Col>
+                  <Col md={4}>
+                    <FormGroup>
+                      {/* <Label for="exampleEmail">Textfeild</Label> */}
+                      <Input
+                        type="text"
+                        style={{ height: 55, marginTop: "16px" }}
+                        placeholder="Dosage 20"
+                        value={dosage20}
+                        onChange={e => setdosage20(e.target.value)}
+                      />
+                    </FormGroup>
+                  </Col>
+                </Row>
+
+                <Row>
+                  <Col md={4}>
+                    <FormGroup>
+                      {/* <Label for="exampleEmail">Textfeild</Label> */}
+                      <Input
+                        type="text"
+                        style={{ height: 55, marginTop: "16px" }}
+                        placeholder="Dosage 40"
+                        value={dosage40}
+                        onChange={e => setdosage40(e.target.value)}
+                      />
+                    </FormGroup>
+                  </Col>
+                  <Col md={4}>
+                    <FormGroup>
+                      {/* <Label for="exampleEmail">Textfeild</Label> */}
+                      <Input
+                        type="text"
+                        style={{ height: 55, marginTop: "16px" }}
+                        placeholder="Dosage LOT"
+                        value={dosageLOT}
+                        onChange={e => setdosageLOT(e.target.value)}
+                      />
+                    </FormGroup>
+                  </Col>
+                  <Col md={4}>
+                    <FormGroup>
+                      {/* <Label for="exampleEmail">Textfeild</Label> */}
+                      <Input
+                        type="text"
+                        style={{ height: 55, marginTop: "16px" }}
+                        placeholder="Dosage Bulk"
+                        value={dosageBulk}
+                        onChange={e => setdosageBulk(e.target.value)}
+                      />
+                    </FormGroup>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col md={4}>
+                    <FormGroup>
+                      {/* <Label for="exampleEmail">Textfeild</Label> */}
+                      <Input
+                        type="text"
+                        style={{ height: 55, marginTop: "16px" }}
+                        placeholder="Dosage 20 HC"
+                        value={dosage20hc}
+                        onChange={e => setdosage20hc(e.target.value)}
+                      />
+                    </FormGroup>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col md={10} />
+                  <Col md={2}>
+                    <Button
+                      style={{ marginTop: "10px" }}
+                      className="w-100"
+                      color="primary"
+                      variant="contained"
+                      onClick={upsertSetup}
+                    >
+                      {isEdit ? "Edit" : "Add"}
+                    </Button>
+                  </Col>
+                </Row>
+              </Form>
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose} color="primary">
+              Close
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </div>
+    </React.Fragment>
+  )
+}
+
+export default ConcentrationSetup

@@ -1,0 +1,67 @@
+@import "~antd/dist/antd.css";
+
+.dark-theme-bg-color-sidebar {
+  background-color: #222736 !important;
+  color: white !important;
+}
+
+.dark-theme-bg-color {
+  background-color: #222736 !important;
+  color: white !important;
+}
+
+.wrapper {
+  padding: 100px;
+}
+
+.image--cover {
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
+  margin: 20px;
+  object-fit: cover;
+  object-position: center right;
+}
+
+.boxView {
+  font-weight: bold;
+  font-size: 16px;
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.contact_person_heading {
+  position: relative;
+  font-size: 20px;
+  z-index: 1;
+  overflow: hidden;
+  text-align: center;
+}
+.contact_person_heading:before,
+.contact_person_heading:after {
+  position: absolute;
+  top: 51%;
+  overflow: hidden;
+  width: 50%;
+  height: 1px;
+  content: "\a0";
+  background-color: #ccc;
+}
+.contact_person_heading:before {
+  margin-left: -50%;
+}
+
+.row-highlight {
+  background-color: #D80038;
+  color: white !important;
+}

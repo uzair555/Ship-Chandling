@@ -1,0 +1,19 @@
+
+
+
+
+
+@media (max-width:1199px) {
+   .amount-style{
+       font-size: 15px;
+    }
+    #btn-month-style{
+      width: 140px;
+    }
+}
+
+@media (max-width:776px) {
+    #btn-month-style{
+        width: 125px;
+    }
+}
