@@ -32,9 +32,7 @@ const SignUp = () => {
       password: password,
     }
 
-    console.log(body)
-
-    CREATE(`/api/Authenticate/register`, body)
+    CREATE(`${process.env.REACT_APP_BASE_API_URL}/api/authenticate/register`, body)
       .then(res => {
         setIsDisable(true)
         if (res.data.status == "Success") {
@@ -47,7 +45,7 @@ const SignUp = () => {
       .catch(e => {
         setIsMessageShow(true)
         console.log(e)
-        setMessage(e.response)
+        setMessage(e.response.data.title)
         setTimeout(() => {
           setIsMessageShow(false)
         }, 2000)
@@ -78,7 +76,7 @@ const SignUp = () => {
                           className="text-center"
                           style={{ color: "#5570e7" }}
                         >
-                          Ship Chandli
+                          Fumigation
                         </h1>
                       </Link>
                     </div>
@@ -86,7 +84,7 @@ const SignUp = () => {
                       <div>
                         <h5 className="text-primary">Welcome Back !</h5>
                         <p className="text-muted">
-                          Sign up to access Ship Chandli.
+                          Sign up to access Fumigation.
                         </p>
                       </div>
 
@@ -154,7 +152,7 @@ const SignUp = () => {
                     <Snackbar open={isMessageShow} message={message} />
                     <div className="mt-4 mt-md-5 text-center">
                       <p className="mb-0">
-                        © {new Date().getFullYear()} Ship Chandli. Crafted with{" "}
+                        © {new Date().getFullYear()} Fumigation. Crafted with{" "}
                         <i className="mdi mdi-heart text-danger"></i> by 8Minds
                         Solutions
                       </p>

@@ -31,7 +31,7 @@ const OTPPage = () => {
 
         let email = localStorage.getItem("email")
 
-        CREATE(`/api/Authenticate/VerifyOTPReset?email=${email}&otp=${otp}`)
+        CREATE(`${process.env.REACT_APP_BASE_API_URL}/api/authenticate/VerifyOTPReset?email=${email}&otp=${otp}`)
             .then(res => {
                 setIsDisable(true)
                 if (res.status == 200) {
@@ -82,7 +82,7 @@ const OTPPage = () => {
                                                     className="text-center"
                                                     style={{ color: "#5570e7" }}
                                                 >
-                                                    Ship Chandli
+                                                    Fumigation
                                                 </h1>
                                             </Link>
                                         </div>
@@ -122,7 +122,7 @@ const OTPPage = () => {
                                         <Snackbar open={isMessageShow} message={message} />
                                         <div className="mt-4 mt-md-5 text-center">
                                             <p className="mb-0">
-                                                © {new Date().getFullYear()} Ship Chandli. Crafted with{" "}
+                                                © {new Date().getFullYear()} Fumigation. Crafted with{" "}
                                                 <i className="mdi mdi-heart text-danger"></i> by 8Minds
                                                 Solutions
                                             </p>

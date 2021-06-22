@@ -31,7 +31,7 @@ const ForgotPassword = () => {
 
         }
 
-        CREATE(`/api/Authenticate/ForgotPassword`, body)
+        CREATE(`${process.env.REACT_APP_BASE_API_URL}/api/authenticate/ForgotPassword`, body)
             .then(res => {
                 setIsDisable(true)
                 if (res.status == 200) {
@@ -44,7 +44,7 @@ const ForgotPassword = () => {
             })
             .catch(e => {
                 setIsMessageShow(true)
-                setMessage(e.response)
+                setMessage(e.response.data.title)
                 setTimeout(() => {
                     setIsMessageShow(false)
                 }, 2000)
@@ -75,7 +75,7 @@ const ForgotPassword = () => {
                                                     className="text-center"
                                                     style={{ color: "#5570e7" }}
                                                 >
-                                                    Ship Chandli
+                                                    Fumigation
                                                 </h1>
                                             </Link>
                                         </div>
@@ -121,7 +121,7 @@ const ForgotPassword = () => {
                                         <Snackbar open={isMessageShow} message={message} />
                                         <div className="mt-4 mt-md-5 text-center">
                                             <p className="mb-0">
-                                                © {new Date().getFullYear()} Ship Chandli. Crafted with{" "}
+                                                © {new Date().getFullYear()} Fumigation. Crafted with{" "}
                                                 <i className="mdi mdi-heart text-danger"></i> by 8Minds
                                                 Solutions
                                             </p>
