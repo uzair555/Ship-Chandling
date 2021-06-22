@@ -36,7 +36,7 @@ const ResetPassword = () => {
       Token : resetToken
     }
     
-      CREATE(`${process.env.REACT_APP_BASE_API_URL}/api/authenticate/ResetPassword`, body)
+      CREATE(`/api/Authenticate/ResetPassword`, body)
       .then(res => {
         if (res.status == 200) {
           setIsOpen(true)
@@ -80,7 +80,7 @@ const ResetPassword = () => {
                           className="text-center"
                           style={{ color: "#5570e7" }}
                         >
-                          Fumigation
+                         Ship Chandli
                         </h1>
                       </Link>
                     </div>
@@ -88,7 +88,7 @@ const ResetPassword = () => {
                       <div>
                         <h5 className="text-primary">Welcome Back !</h5>
                         <p className="text-muted">
-                          Reset Password to continue to Fumigation.
+                          Reset Password to continue to Ship Chandli.
                         </p>
                       </div>
 
@@ -138,7 +138,7 @@ const ResetPassword = () => {
 
                     <div className="mt-4 mt-md-5 text-center">
                       <p className="mb-0">
-                        © {new Date().getFullYear()} Fumigation. Crafted
+                        © {new Date().getFullYear()} Ship Chandli. Crafted
                         with <i className="mdi mdi-heart text-danger"></i> by
                         8Minds Solutions
                       </p>
